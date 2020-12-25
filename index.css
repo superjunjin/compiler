@@ -1,0 +1,14 @@
+.result {
+  display: flex;
+  align-items: center;
+}
+input {
+  padding: 0 0.5px;
+}
+th + th {
+    padding-left: 50px;
+}
+td + td {
+    padding-left: 50px;
+}
+
