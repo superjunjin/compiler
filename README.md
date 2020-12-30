@@ -5,3 +5,5 @@
 - 状态：在每个状态中，累计字符，直到形成token。
 
 
+![Lexer](/img/Lexer.png)
+
