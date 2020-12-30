@@ -2,8 +2,8 @@
 
 
 let tokenText = '';   //临时保存token的文本
-let tokens = [];       //保存解析出来的Token
-let token = {};        //当前正在解析的Token 
+let tokens = [];       //保存解析出来的Token数组
+let token = {};        //当前正在解析的Token集合 
 
 /**
  * 有限状态机进入初始状态。
@@ -166,7 +166,14 @@ const tokenize = (code) => {
             default:
                 break;
         }
+        
     }
+    // 把最后一个token送进去
+    // 循环到最后一个字符时，tokenText已经形成好，但是没有后续字符使其终结此token进入initToken了
+    if (tokenText.length > 0) {
+        initToken();
+    }
+    
 }
 
 /**
