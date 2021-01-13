@@ -28,7 +28,7 @@
 
 ### 概念
 
-- 乘法分析表达式：multiplicativeExpression: IntLiteral | IntLiteral Star multiplicativeExpression;
+- 乘法分析表达式：multiplicative -> primary | primary * multiplicative
 - 首先，实现IntLiteral也就是乘法表达式文法的第一个字符分析，参见方法SimpleCalculator中的primary
 - 其次，实现乘法表达式的分析，参见方法SimpleCalculator中的multiplicative
 - 消耗token：tokens.shift()防范消耗掉tokens数组第一个token
@@ -51,3 +51,21 @@
 ### 图示
 
 ![3](/img/3.png)
+
+
+## 1.2.2 实现加法
+
+### 概念
+
+- 加法分析表达式： additive -> multiplicative | multiplicative + additive
+- 加法算法解读：
+> 我们先尝试能否匹配乘法表达式，如果不能，那么这个节点肯定不是加法节点，因为加法表达式的两个产生式都必须首先匹配乘法表达式。遇到这种情况，返回 null 就可以了，调用者就这次匹配没有成功。
+如果乘法表达式匹配成功，那就再尝试匹配加号右边的部分，也就是去递归地匹配加法表达式。如果匹配成功，就构造一个加法的 ASTNode 返回。
+- 优先级：在加法规则中，会嵌套地匹配乘法规则。我们通过文法的嵌套，实现了计算的优先级。
+
+### 问题
+- 结合性：现在是从右向左结合，不符合从左向右的计算规则。所以，==我们前面的方法其实并没有完美地解决左递归，因为它改变了加法运算的结合性规则==
+
+### 图示
+
+![4](/img/4.png)

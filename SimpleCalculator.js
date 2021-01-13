@@ -8,11 +8,8 @@
  */
 
 /**
- * 语法解析：基础表达式。匹配乘法表达式文法的第一个字符，也就是那个IntLiteral
- * multiplicativeExpression
-    :   IntLiteral
-    |   IntLiteral Star multiplicativeExpression
-    ;
+ * 语法解析：基础表达式。匹配乘法表达式文法的第一个字符，也就是那个primary
+ * multiplicative -> primary | primary * multiplicative 
  * @return node 节点集合
  */
 const primary = (tokens) => {
@@ -32,15 +29,12 @@ const primary = (tokens) => {
 
 /**
  * 语法解析：乘法表达式
- * multiplicativeExpression
-    :   IntLiteral
-    |   IntLiteral Star multiplicativeExpression
-    ;
+ * multiplicative -> primary | primary * multiplicative 
  * @return node 节点集合
  * 第一个字符和后面的表达式相乘，后面的表达式递归调用下去。
  */
 const multiplicative = (tokens) => {
-    const child1 = primary(tokens);// 返回第一个节点IntLiteral
+    const child1 = primary(tokens);// 返回第一个节点primary
     let node = child1;
 
     let token = tokens[0];
@@ -61,19 +55,43 @@ const multiplicative = (tokens) => {
 }
 
 /**
+ * 语法解析：加法表达式
+ * additive -> multiplicative | multiplicative + additive
+ * @return node 节点集合
+ * 第一个字符和后面的表达式相乘，后面的表达式递归调用下去。
+ */
+const additive = (tokens) => {
+    const child1 = multiplicative(tokens);// 返回第一个节点multiplicative
+    let node = child1;
+
+    let token = tokens[0];
+    if (child1 != null && token != null) {
+        if (token.type == TokenType.Plus || token.type == TokenType.Minus) {
+            token = tokens.shift();
+            let child2 = additive(tokens);// 递归调用下去
+            if (child2 != null) {
+                node = {type: ASTNodeType.Additive, text: token.text, child: []};
+                node.child.push(child1);
+                node.child.push(child2);
+            } else {
+                console.log("invalid additive expression, expecting the right part.");
+            }
+        }
+    }
+    return node;
+}
+
+/**
  * 打印输出AST的树状结构
  * @param node
  * @param indent 缩进字符，由tab组成，每一级多一个tab
  */
 const dumpAST = (node, indent) => {
     console.log(indent + node.type + " " + node.text);
-    // for (ASTNode child : node.getChildren()) {
-    //     dumpAST(child, indent + "\t");
-    // }
     if(node.child){
         for (let index = 0; index < node.child.length; index++) {
             const element = node.child[index];
-            dumpAST(element, indent + "\t"); 
+            dumpAST(element, indent + "\t\t"); 
         }
     } 
 }
