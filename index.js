@@ -6,6 +6,8 @@ const multbuttonEl = document.getElementById('mult')
 const multinputEl = document.getElementById('multinput')
 const addbuttonEl = document.getElementById('add')
 const addinputEl = document.getElementById('addinput')
+const intbuttonEl = document.getElementById('intbutton')
+const intinputEl = document.getElementById('intinput')
 
 let tokenText = '';   //临时保存token的文本
 let tokens = [];       //保存解析出来的Token数组
@@ -49,6 +51,22 @@ function addrun () {
     tokenize(addinputEl.value);
     try {
         const node = additive(tokens);
+        console.log('node', node);
+        dumpAST(node, "");
+    }
+    catch (e){
+        console.log(e)
+    }
+}
+
+// 整型变量声明语法分析
+intbuttonEl.addEventListener('click', intrun)
+function intrun () {
+    if (!intinputEl.value.trim()) return
+    tokens = []; 
+    tokenize(intinputEl.value);
+    try {
+        const node = intDeclare(tokens);
         console.log('node', node);
         dumpAST(node, "");
     }

@@ -74,7 +74,50 @@ const additive = (tokens) => {
                 node.child.push(child1);
                 node.child.push(child2);
             } else {
-                console.log("invalid additive expression, expecting the right part.");
+                console.error("invalid additive expression, expecting the right part.");
+            }
+        }
+    }
+    return node;
+}
+
+/**
+ * 整型变量声明语句，如：
+ * int a;
+ * int b = 2*3;
+ *
+ * @return node 节点集合
+ */
+const intDeclare = (tokens) => {
+    let node = null;
+    let token = tokens[0];    //预读
+    if (token != null && token.type == TokenType.Int) {   //匹配Int
+        token = tokens.shift();      //消耗掉int
+        if (tokens[0].type == TokenType.Identifier) { //匹配标识符
+            token = tokens.shift();  //消耗掉标识符
+            //创建当前节点，并把变量名记到AST节点的文本值中，这里新建一个变量子节点也是可以的
+            node = { type: ASTNodeType.IntDeclaration, text: token.text , child: []};
+            token = tokens[0];  //预读
+            if (token != null && token.type == TokenType.Assignment) {
+                tokens.shift();      //消耗掉等号
+                const child = additive(tokens);  //匹配一个表达式
+                if (child == null) {
+                    console.error("invalide variable initialization, expecting an expression");
+                }
+                else{
+                    node.child.push(child);
+                }
+            }
+        } else {
+            console.error("variable name expected");
+        }
+
+        if (node != null) {
+            token = tokens[0];
+            if (token != null && token.type == TokenType.SemiColon) {
+                tokens.shift();
+            } else {
+                console.error("invalid statement, expecting semicolon");
             }
         }
     }
