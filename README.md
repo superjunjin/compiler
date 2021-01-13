@@ -10,13 +10,14 @@
 
 - 最后一个token没有分析到：循环到最后一个字符时，tokenText已经形成好，但是没有后续字符使其终结此token进入initToken了，因此在输入字符循环外加入initToken方法去形成最后一个token
 
-```
+```javascript
     // 把最后一个token送进去
     // 循环到最后一个字符时，tokenText已经形成好，但是没有后续字符使其终结此token进入initToken了
     if (tokenText.length > 0) {
         initToken();
     }
 ```
+## 图示
 
 ![Lexer](/img/Lexer.png)
 ![Lexer](/img/Lexer2.png)
@@ -38,7 +39,7 @@
 
 - 避免递归时报错，影响后续的循环
 
-```
+```javascript
     if(node.child){
         for (let index = 0; index < node.child.length; index++) {
             const element = node.child[index];
@@ -46,3 +47,7 @@
         }
     } 
 ```
+
+### 图示
+
+![3](/img/3.png)
