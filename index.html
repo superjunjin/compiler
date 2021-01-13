@@ -7,16 +7,24 @@
   <link rel="stylesheet" href="index.css">
 </head>
 <body>
-  <label for="input">词法分析（Lexical Analysis）:</label>
+  <label for="input">词法分析:</label>
   <input style="width: 200px" type="text" id="input" value="" placeholder="please input code" />
   <button id="lexical">分析</button>
   <div class="result">
     <h4>词法分析结果:&ensp;</h4>
     <p id="result"></p>
   </div>
-
-  <script src="index.js"></script>
-  <script src="SimpleLexer.js"></script>
+  <label for="input">乘法语法分析:</label>
+  <input style="width: 200px" type="text" id="multinput" value="" placeholder="please input code" />
+  <button id="multlexical">分析</button>
+  <div class="result">
+    <h4>乘法语法分析结果:&ensp;</h4>
+    <p id="multresult"></p>
+  </div>
   <script src="TokenType.js"></script>
+  <script src="ASTNodeType.js"></script>
+  <script src="SimpleLexer.js"></script>
+  <script src="SimpleCalculator.js"></script>
+  <script src="index.js"></script>
 </body>
 </html>

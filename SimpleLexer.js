@@ -1,15 +1,12 @@
 
 
 
-let tokenText = '';   //临时保存token的文本
-let tokens = [];       //保存解析出来的Token数组
-let token = {};        //当前正在解析的Token集合 
 
 /**
  * 有限状态机进入初始状态。
  * 这个初始状态其实并不做停留，它马上进入其他状态。
  * 开始解析的时候，进入初始状态；某个Token解析完毕，也进入初始状态，在这里把Token记下来，然后建立一个新的Token。
- * @param ch 字符
+ * @param ch 字符   
  * @return newState 跳转到新的状态
  */
 const initToken = (ch) => {
@@ -173,6 +170,8 @@ const tokenize = (code) => {
     if (tokenText.length > 0) {
         initToken();
     }
+
+    // return tokens;
     
 }
 
@@ -231,12 +230,12 @@ const dump = () => {
             <td>${token.type}</td>
         </tr>`;
     }
-    console.log(tokens_str);
+    // console.log(tokens_str);
     return tokens_str + '</table>';
 }
 // 获取分析结果的表格html字符串
 const getCodeLexer = (code) => {
-    console.log(code);
+    // console.log(code);
     tokens = [];
     tokenize(code);
     return dump(tokens);
