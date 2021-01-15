@@ -19,9 +19,22 @@ const primary = (tokens) => {
         if (token.type == TokenType.IntLiteral) {//整型字面量
             token = tokens.shift();// 消耗掉tokens数组第一个token
             node = {type: ASTNodeType.IntLiteral, text: token.text};
-        }else if (token.getType() == TokenType.Identifier) {//标识符
+        }else if (token.type == TokenType.Identifier) {//标识符
             token = tokens.shift();
             node = {type: ASTNodeType.Identifier, text: token.text};
+        }else if (token.type == TokenType.LeftParen){
+            tokens.shift();
+            node = additive(tokens);//生成好算数表达式的node，且只剩下右括号没有被消耗掉。
+            if (node != null) {
+                token = tokens[0];
+                if (token != null && token.type == TokenType.RightParen) {
+                    tokens.shift();
+                } else {
+                    console.log("expecting right parenthesis");
+                }
+            } else {
+                console.log("expecting an additive expression inside parenthesis");
+            }
         }
     }
     return node;  //这个方法也做了AST的简化，就是不用构造一个primary节点，直接返回子节点。因为它只有一个子节点。
