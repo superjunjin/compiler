@@ -8,6 +8,8 @@ const addbuttonEl = document.getElementById('add')
 const addinputEl = document.getElementById('addinput')
 const intbuttonEl = document.getElementById('intbutton')
 const intinputEl = document.getElementById('intinput')
+const evaluatebuttonEl = document.getElementById('evaluatebutton')
+const evaluateinputEl = document.getElementById('evaluateinput')
 
 let tokenText = '';   //临时保存token的文本
 let tokens = [];       //保存解析出来的Token数组
@@ -72,5 +74,24 @@ function intrun () {
     }
     catch (e){
         console.log(e)
+    }
+}
+
+// 表达式计算值
+evaluatebuttonEl.addEventListener('click', evaluaterun)
+function evaluaterun () {
+    if (!evaluateinputEl.value.trim()) return
+    try {
+        tokens = [];
+        tokenize(evaluateinputEl.value); // 词法分析后，
+
+        const tree = prog(tokens);// 语法分析，并返回根节点
+        console.log('-------------------tree-------------------')
+        dumpAST(tree, "");// 打印树结构
+        console.log('-------------------求值-------------------')
+        evaluate(tree, "");// 计算表达式树的值并打印
+
+    } catch (e) {
+       console.log(e)
     }
 }

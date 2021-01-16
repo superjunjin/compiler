@@ -138,6 +138,80 @@ const intDeclare = (tokens) => {
 }
 
 /**
+ * 语法解析：根节点
+ * @return node 节点集合
+ */
+const prog = (tokens) => {
+    let node = { type: ASTNodeType.Programm, text: "Calculator" , child: []};
+    
+    const child = additive(tokens);
+
+    if (child != null) {
+        node.child.push(child);
+    }
+    return node;
+}
+
+/**
+ * 词法分析后，语法分析，并返回根节点
+ * @param code
+ * @return rootNode
+ */
+const parse = (code) => {
+    const tokens = tokenize(code);
+
+    const rootNode = prog(tokens);
+
+    return rootNode;
+}
+
+/**
+ * 对某个AST节点求值，并打印求值过程。
+ * @param node
+ * @param indent  打印输出时的缩进量，用tab控制
+ * @return result 结果值
+ */
+const evaluate = (node, indent) => {
+    let result = 0;
+    console.log(indent + "Calculating: " + node.type);
+    switch (node.type) {
+    case ASTNodeType.Programm:
+        for (let index = 0; index < node.child.length; index++) {
+            result = evaluate(node.child[index], indent + "\t")
+        }
+        break;
+    case ASTNodeType.Additive:
+        const child1 = node.child[0];
+        const value1 = evaluate(child1, indent + "\t");
+        const child2 = node.child[1];
+        const value2 = evaluate(child2, indent + "\t");
+        if (node.text == "+") {
+            result = value1 + value2;
+        } else {
+            result = value1 - value2;
+        }
+        break;
+    case ASTNodeType.Multiplicative:
+        const child3 = node.child[0];
+        const value3 = evaluate(child3, indent + "\t");
+        const child4 = node.child[1];
+        const value4 = evaluate(child4, indent + "\t");
+        if (node.text == "*") {
+            result = value3 * value4;
+        } else {
+            result = value3 / value4;
+        }
+        break;
+    case ASTNodeType.IntLiteral:
+        result = Number(node.text);
+        break;
+    default:
+    }
+    console.log(indent + "Result: " + result);
+    return result;
+}
+
+/**
  * 打印输出AST的树状结构
  * @param node
  * @param indent 缩进字符，由tab组成，每一级多一个tab
