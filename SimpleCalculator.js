@@ -46,23 +46,56 @@ const primary = (tokens) => {
  * @return node 节点集合
  * 第一个字符和后面的表达式相乘，后面的表达式递归调用下去。
  */
-const multiplicative = (tokens) => {
-    const child1 = primary(tokens);// 返回第一个节点primary
-    let node = child1;
+// const multiplicative = (tokens) => {
+//     const child1 = primary(tokens);// 返回第一个节点primary
+//     let node = child1;
 
-    let token = tokens[0];
-    if (child1 != null && token != null) {
-        if (token.type == TokenType.Star || token.type == TokenType.Slash) {
-            token = tokens.shift();
-            let child2 = multiplicative(tokens);// 递归调用下去
-            if (child2 != null) {
-                node = {type: ASTNodeType.Multiplicative, text: token.text, child: []};
-                node.child.push(child1);
-                node.child.push(child2);
-            } else {
-                console.log("invalid multiplicative expression, expecting the right part.");
+//     let token = tokens[0];
+//     if (child1 != null && token != null) {
+//         if (token.type == TokenType.Star || token.type == TokenType.Slash) {
+//             token = tokens.shift();
+//             let child2 = multiplicative(tokens);// 递归调用下去
+//             if (child2 != null) {
+//                 node = {type: ASTNodeType.Multiplicative, text: token.text, child: []};
+//                 node.child.push(child1);
+//                 node.child.push(child2);
+//             } else {
+//                 console.log("invalid multiplicative expression, expecting the right part.");
+//             }
+//         }
+//     }
+//     return node;
+// }
+
+/**
+ * 语法解析：乘法表达式新
+ * mul -> pri (* pri)*
+ * @return node 节点集合
+ * 节点1加节点2形成新的节点，再不停循环加新的节点下去。直到下个输入字符没有乘号（停止循环）
+ */
+const multiplicative = (tokens) => {
+    let child1 = primary(tokens);// 返回第一个节点primary
+    let node = child1;
+ 
+    if (child1 != null) {
+        while(true){
+            let token = tokens[0];
+            if (token != null && (token.type == TokenType.Star || token.type == TokenType.Slash)) {
+                token = tokens.shift();
+                const child2 = primary(tokens);// 计算下级节点
+                if (child2 != null) {
+                    node = {type: ASTNodeType.Multiplicative, text: token.text, child: []};
+                    node.child.push(child1);
+                    node.child.push(child2);
+                    child1 = node;
+                } else {
+                    console.log("invalid multiplicative expression, expecting the right part.");
+                }
+            }else{
+                break;
             }
         }
+        
     }
     return node;
 }
@@ -73,23 +106,56 @@ const multiplicative = (tokens) => {
  * @return node 节点集合
  * 第一个字符和后面的表达式相乘，后面的表达式递归调用下去。
  */
+// const additive = (tokens) => {
+//     const child1 = multiplicative(tokens);// 返回第一个节点multiplicative
+//     let node = child1;
+
+//     let token = tokens[0];
+//     if (child1 != null && token != null) {
+//         if (token.type == TokenType.Plus || token.type == TokenType.Minus) {
+//             token = tokens.shift();
+//             let child2 = additive(tokens);// 递归调用下去
+//             if (child2 != null) {
+//                 node = {type: ASTNodeType.Additive, text: token.text, child: []};
+//                 node.child.push(child1);
+//                 node.child.push(child2);
+//             } else {
+//                 console.error("invalid additive expression, expecting the right part.");
+//             }
+//         }
+//     }
+//     return node;
+// }
+
+/**
+ * 语法解析：加法表达式
+ * add -> mul (+ mul)* 
+ * @return node 节点集合
+ * 节点1加节点2形成新的节点，再不停循环加新的节点下去。直到下个输入字符没有加号（停止循环）
+ */
 const additive = (tokens) => {
-    const child1 = multiplicative(tokens);// 返回第一个节点multiplicative
+    let child1 = multiplicative(tokens);// 返回第一个节点multiplicative
     let node = child1;
 
-    let token = tokens[0];
-    if (child1 != null && token != null) {
-        if (token.type == TokenType.Plus || token.type == TokenType.Minus) {
-            token = tokens.shift();
-            let child2 = additive(tokens);// 递归调用下去
-            if (child2 != null) {
-                node = {type: ASTNodeType.Additive, text: token.text, child: []};
-                node.child.push(child1);
-                node.child.push(child2);
-            } else {
-                console.error("invalid additive expression, expecting the right part.");
+    if (child1 != null) {
+        while(true){
+            let token = tokens[0];
+            if (token != null && (token.type == TokenType.Plus || token.type == TokenType.Minus)) {
+                token = tokens.shift();
+                let child2 = multiplicative(tokens);// 递归调用下去
+                if (child2 != null) {
+                    node = {type: ASTNodeType.Additive, text: token.text, child: []};
+                    node.child.push(child1);
+                    node.child.push(child2);
+                    child1 = node;
+                } else {
+                    console.error("invalid additive expression, expecting the right part.");
+                }
+            }else{
+                break;
             }
         }
+        
     }
     return node;
 }
