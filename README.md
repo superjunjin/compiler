@@ -112,5 +112,10 @@
   - tokens数组进入while循环依次判断是intDeclare，expressionStatement，assignmentStatement三种语句中的哪种语句。
   - 每次循环判断出一种语句加入到tree中，都不属于就报错。
   - expressionStatement、assignmentStatement如果不能匹配上（返回null），必须进行回溯，找回消耗掉的token进行下次判断。
+- 回溯：
+  - 概念：尝试一个规则不成功之后，恢复到原样，再去尝试另外的规则，这个现象就叫做“回溯”。
+  - 缺点：缺点是回溯会拉低一点儿效率
+  - 优化：实现带有预测分析的递归下降，以及非递归的预测分析
+  
 ### 图示
 ![7](/img/7.png)
