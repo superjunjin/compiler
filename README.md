@@ -99,8 +99,18 @@
   - 乘法：mul -> pri (* pri)$ ^* $
 
 ### 图示
-![5](/img/6.png)
+![6](/img/6.png)
 
 ### 公式显示问题
 - 装Chrome插件MathJax
 - 两个$之间插入公式
+
+## 1.2.7 脚本解析
+### 概念
+- 主要内容：主要针对变量声明和初始化语句intDeclare，表达式语句expressionStatement，赋值语句assignmentStatement进行解析出树🌲结构
+- 主要逻辑：
+  - tokens数组进入while循环依次判断是intDeclare，expressionStatement，assignmentStatement三种语句中的哪种语句。
+  - 每次循环判断出一种语句加入到tree中，都不属于就报错。
+  - expressionStatement、assignmentStatement如果不能匹配上（返回null），必须进行回溯，找回消耗掉的token进行下次判断。
+### 图示
+![7](/img/7.png)
