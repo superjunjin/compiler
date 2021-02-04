@@ -29,3 +29,5 @@ const TokenType = {
     IntLiteral: 'IntLiteral',     //整型字面量
     StringLiteral: 'StringLiteral'   //字符串字面量
 }
+
+exports.TokenType = TokenType;

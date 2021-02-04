@@ -12,3 +12,5 @@ const ASTNodeType = {
     Identifier: 'Identifier',         //标识符
     IntLiteral: 'IntLiteral'          //整型字面量
 }
+
+exports.ASTNodeType = ASTNodeType;

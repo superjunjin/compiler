@@ -11,7 +11,12 @@
  * multiplicative -> primary ( (* | /) primary)*
  * primary -> IntLiteral | Id | (additive)
  */
+const SimpleLexer = require('./SimpleLexer');
+const { ASTNodeType } = require('./ASTNodeType')
+const { TokenType } = require('./TokenType')
+const { additive } = require('./SimpleCalculator')
 
+let tokens;
 
 /**
  * 解析脚本
@@ -19,10 +24,16 @@
  * @return {Object} 节点树集合
  */
 const parseParser = (script) => {
-    const tokens = tokenize(script);
-    const rootNode = prog(tokens);
-    return rootNode;
+    // const tokens = tokenize(script);
+    // const rootNode = prog(tokens);
+    // return rootNode;
+
+    tokens = SimpleLexer.tokenize(script); // 词法分析后，
+    const tree = progParser();// 语法分析，并返回根节点
+    dumpASTParser(tree, '');
+    // return tree;
 }
+// let strTree = '';
 
 /**
  * 打印输出AST的树状结构
@@ -30,13 +41,15 @@ const parseParser = (script) => {
  * @param indent 缩进字符，由tab组成，每一级多一个tab
  */
 const dumpASTParser = (node, indent) => {
+    // strTree = strTree + indent + node.type + " " + node.text + "\n"
     console.log(indent + node.type + " " + node.text);
     if(node.child){
         for (let index = 0; index < node.child.length; index++) {
             const element = node.child[index];
-            dumpAST(element, indent + "\t\t"); 
+            dumpASTParser(element, indent + "\t\t"); 
         }
     } 
+    // return strTree;
 }
 
 /**
@@ -174,3 +187,6 @@ const assignmentStatement = () => {
     }
     return node;
 }
+
+exports.parseParser = parseParser;
+exports.dumpASTParser = dumpASTParser;

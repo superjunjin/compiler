@@ -1,6 +1,8 @@
+const { TokenType } = require('./TokenType')
 
-
-
+let tokenText = '';   //临时保存token的文本
+let tokens = [];       //保存解析出来的Token数组
+let token = {};        //当前正在解析的Token集合 
 
 /**
  * 有限状态机进入初始状态。
@@ -82,6 +84,7 @@ const initToken = (ch) => {
  */
 // 第一个token（字符串'int'），经过Id_int1到Id_int3状态后，进入initToken方法，tokenText累加为‘int’，当前token被记录为text为‘int‘和type。
 const tokenize = (code) => {
+    tokens = [];//清空数据
     let state = DfaState.Initial;// 当前状态
     const codeStrArr = code.split(''); // 字符串数组
     for (let index = 0; index < codeStrArr.length; index++) {
@@ -171,7 +174,7 @@ const tokenize = (code) => {
         initToken();
     }
 
-    // return tokens;
+    return tokens;
     
 }
 
@@ -240,3 +243,5 @@ const getCodeLexer = (code) => {
     tokenize(code);
     return dump(tokens);
 }
+
+exports.tokenize = tokenize;

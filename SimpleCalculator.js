@@ -7,6 +7,9 @@
  * 递归项在右边，会自然的对应右结合。我们真正需要的是左结合。
  */
 
+const { ASTNodeType } = require('./ASTNodeType')
+const { TokenType } = require('./TokenType')
+
 /**
  * 语法解析：基础表达式。匹配乘法表达式文法的第一个字符，也就是那个primary
  * multiplicative -> primary | primary * multiplicative 
@@ -291,3 +294,5 @@ const dumpAST = (node, indent) => {
         }
     } 
 }
+
+exports.additive = additive;
