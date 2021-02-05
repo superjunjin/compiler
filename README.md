@@ -198,6 +198,7 @@ case ASTNodeType.IntDeclaration:
 - 一行多个语句（加tree）
 ![8](/img/8.png)
 - 一行多个语句（不加tree）
-![9](/img/9.png)
+<img src="/img/9.png" alt="1" style="zoom:25%;" />
+
 - 一行一个语句（不加tree）
-![10](/img/10.png)
+<img src="/img/10.png" alt="1" style="zoom:25%;" />
