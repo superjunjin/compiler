@@ -197,8 +197,3 @@ case ASTNodeType.IntDeclaration:
 ### 图示
 - 一行多个语句（加tree）
 ![8](/img/8.png)
-- 一行多个语句（不加tree）
-<img src="/img/9.png" alt="1" style="zoom:25%;" />
-
-- 一行一个语句（不加tree）
-<img src="/img/10.png" alt="1" style="zoom:25%;" />
