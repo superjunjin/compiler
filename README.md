@@ -119,3 +119,85 @@
   
 ### 图示
 ![7](/img/7.png)
+
+## 1.2.8 命令行执行脚本
+### 概念
+- 服务：起node服务了，`node app.js`
+- 调试：`node --inspect app.js`
+- node
+  - repl：交互式解释器，repl 模块提供了一种“读取-求值-输出”循环（REPL）的实现，它可作为一个独立的程序或嵌入到其他应用中。 
+    - repl.start：prompt-初始命令行提示，eval：对输入内容cmd设置自定义处理函数，callback送出数据，
+    writer：对输出数据的处理函数
+      - repl.start.defineCommand：自定义命令行，这里定义tree命令运行语句才会输出树🌲结构，即运行`.tree 2*3;`
+### 代码
+- Map：存取变量的键值对用到ES6的Map去存取
+  - `const variables = new Map();`
+  - `variables.has(varName)`
+  - `variables.get(varName)`
+  - `variables.set(varName3, varValue3);`
+- switch case：没有break，case顺序执行这个用法，对于我有点别扭。但我看java和javascript都是这样用。理解成没有break，多个case是或的关系都会执行（其实是每个case下没有代码的我理解，case下还有代码的别扭）。
+- node命令行服务代码：
+```javascript
+const repl = require('repl');
+const { parseParser, evaluateParser, dumpASTParser } = require('./SimpleParser');
+
+const replServer = repl.start({ prompt: 'Simple script language! \n> ', eval: myEval });
+
+replServer.defineCommand('tree', {
+    help: '输出树🌲结构',
+    action(name) {
+        this.clearBufferedCommand();
+        if (name.trimEnd().endsWith(";")) {
+            const tree = parseParser(name);  // 树结构解析
+            dumpASTParser(tree, ''); // 树结构打印输出
+            const result = evaluateParser(tree, "", true); // 树结构求值
+            console.log(result);
+        }else{
+            console.log('请输入分号结尾的语句');
+        }
+
+        this.displayPrompt();
+    }
+});
+
+function myEval(cmd, context, filename, callback) {
+    if (cmd.trimEnd().endsWith(";")) {
+        const tree = parseParser(cmd); // 树结构解析
+        const result = evaluateParser(tree, "", false); // 树结构求值
+        callback(null, result);
+    } else {
+        callback(null, '请输入分号结尾的语句');
+    }
+
+}
+
+```
+
+- 新求值逻辑代码：只有变量声明和初始化语句intDeclare和赋值语句assignmentStatement的求值是新逻辑的，其他以前都写过了，**注意㊗️接着执行下面的代码那里**。`case ASTNodeType.AssignmentStmt`下的代码不写也行，都用一个逻辑求值（把等号右边的tree求出值）。
+
+
+```javascript
+case ASTNodeType.AssignmentStmt:
+    const varName2 = node.text;
+    if (!variables.has(varName2)){
+        console.log("unknown variable: " + varName2);
+    }
+    //接着执行下面的代码   
+case ASTNodeType.IntDeclaration:
+    const varName3 = node.text;
+    let varValue3 = null;
+    if (node.child.length > 0) {
+        const child = node.child[0];
+        result = evaluateParser(child, indent + "\t");
+        varValue3 = Number(result);
+    }
+    variables.set(varName3, varValue3);
+    break;
+```
+### 图示
+- 一行多个语句（加tree）
+![8](/img/8.png)
+- 一行多个语句（不加tree）
+![9](/img/9.png)
+- 一行一个语句（不加tree）
+![10](/img/10.png)

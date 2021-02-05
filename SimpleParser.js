@@ -16,7 +16,8 @@ const { ASTNodeType } = require('./ASTNodeType')
 const { TokenType } = require('./TokenType')
 const { additive } = require('./SimpleCalculator')
 
-let tokens;
+let tokens;// tokens词法数组
+const variables = new Map(); // 存变量名键值对的Map
 
 /**
  * 解析脚本
@@ -30,10 +31,10 @@ const parseParser = (script) => {
 
     tokens = SimpleLexer.tokenize(script); // 词法分析后，
     const tree = progParser();// 语法分析，并返回根节点
-    dumpASTParser(tree, '');
-    // return tree;
+    // dumpASTParser(tree, '');
+    return tree;
 }
-// let strTree = '';
+
 
 /**
  * 打印输出AST的树状结构
@@ -50,6 +51,92 @@ const dumpASTParser = (node, indent) => {
         }
     } 
     // return strTree;
+}
+
+/**
+ * 遍历AST，计算值。
+ * @param node
+ * @return result
+ */
+const evaluateParser = (node, indent, verbose) => {
+    let result = 0;   
+    if (verbose) {
+        console.log(indent + "Calculating: " + node.type);
+    }
+    switch (node.type) {
+        case ASTNodeType.Programm:
+            for (let index = 0; index < node.child.length; index++) {
+                result = evaluateParser(node.child[index], indent + "\t")
+            }
+            break;
+        case ASTNodeType.Additive:
+            const child1 = node.child[0];
+            const value1 = evaluateParser(child1, indent + "\t");
+            const child2 = node.child[1];
+            const value2 = evaluateParser(child2, indent + "\t");
+            if (node.text == "+") {
+                result = value1 + value2;
+            } else {
+                result = value1 - value2;
+            }
+            break;
+        case ASTNodeType.Multiplicative:
+            const child3 = node.child[0];
+            const value3 = evaluateParser(child3, indent + "\t");
+            const child4 = node.child[1];
+            const value4 = evaluateParser(child4, indent + "\t");
+            if (node.text == "*") {
+                result = value3 * value4;
+            } else {
+                result = value3 / value4;
+            }
+            break;
+        case ASTNodeType.IntLiteral:
+            result = Number(node.text);
+            break;
+        case ASTNodeType.Identifier:
+            const varName = node.text;
+            if (variables.has(varName)) {
+                const value = variables.get(varName);
+                if (value != null) {
+                    result = Number(value);
+                } else {
+                    console.log("variable " + varName + " has not been set any value");
+                }
+            }
+            else{
+                console.log("unknown variable: " + varName);
+            }
+            break;
+        case ASTNodeType.AssignmentStmt:
+            const varName2 = node.text;
+            if (!variables.has(varName2)){
+                console.log("unknown variable: " + varName2);
+            }   //接着执行下面的代码
+        case ASTNodeType.IntDeclaration:
+            const varName3 = node.text;
+            let varValue3 = null;
+            if (node.child.length > 0) {
+                const child = node.child[0];
+                result = evaluateParser(child, indent + "\t");
+                varValue3 = Number(result);
+            }
+            variables.set(varName3, varValue3);
+            break;
+
+        default:
+    }
+
+    if (verbose) {
+        console.log(indent + "Result: " + result);
+    } else if (indent == "") { // 顶层的语句
+        if (node.type == ASTNodeType.IntDeclaration || node.type == ASTNodeType.AssignmentStmt) {
+            console.log(node.text + ": " + result);
+        }else if (node.type != ASTNodeType.Programm){
+            console.log(result);
+        }
+    }
+    return result;
 }
 
 /**
@@ -190,3 +277,4 @@ const assignmentStatement = () => {
 
 exports.parseParser = parseParser;
 exports.dumpASTParser = dumpASTParser;
+exports.evaluateParser = evaluateParser;

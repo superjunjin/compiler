@@ -244,37 +244,37 @@ const evaluate = (node, indent) => {
     let result = 0;
     console.log(indent + "Calculating: " + node.type);
     switch (node.type) {
-    case ASTNodeType.Programm:
-        for (let index = 0; index < node.child.length; index++) {
-            result = evaluate(node.child[index], indent + "\t")
-        }
-        break;
-    case ASTNodeType.Additive:
-        const child1 = node.child[0];
-        const value1 = evaluate(child1, indent + "\t");
-        const child2 = node.child[1];
-        const value2 = evaluate(child2, indent + "\t");
-        if (node.text == "+") {
-            result = value1 + value2;
-        } else {
-            result = value1 - value2;
-        }
-        break;
-    case ASTNodeType.Multiplicative:
-        const child3 = node.child[0];
-        const value3 = evaluate(child3, indent + "\t");
-        const child4 = node.child[1];
-        const value4 = evaluate(child4, indent + "\t");
-        if (node.text == "*") {
-            result = value3 * value4;
-        } else {
-            result = value3 / value4;
-        }
-        break;
-    case ASTNodeType.IntLiteral:
-        result = Number(node.text);
-        break;
-    default:
+        case ASTNodeType.Programm:
+            for (let index = 0; index < node.child.length; index++) {
+                result = evaluate(node.child[index], indent + "\t")
+            }
+            break;
+        case ASTNodeType.Additive:
+            const child1 = node.child[0];
+            const value1 = evaluate(child1, indent + "\t");
+            const child2 = node.child[1];
+            const value2 = evaluate(child2, indent + "\t");
+            if (node.text == "+") {
+                result = value1 + value2;
+            } else {
+                result = value1 - value2;
+            }
+            break;
+        case ASTNodeType.Multiplicative:
+            const child3 = node.child[0];
+            const value3 = evaluate(child3, indent + "\t");
+            const child4 = node.child[1];
+            const value4 = evaluate(child4, indent + "\t");
+            if (node.text == "*") {
+                result = value3 * value4;
+            } else {
+                result = value3 / value4;
+            }
+            break;
+        case ASTNodeType.IntLiteral:
+            result = Number(node.text);
+            break;
+        default:
     }
     console.log(indent + "Result: " + result);
     return result;
